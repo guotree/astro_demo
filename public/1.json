@@ -1,0 +1,147 @@
+{
+    "dns": {
+        "fakeip": {
+            "enabled": true,
+            "inet4_range": "198.18.0.0/15",
+            "inet6_range": "fc00::/18"
+        },
+        "independent_cache": true,
+        "rules": [
+            {
+                "outbound": "any",
+                "server": "dns-local"
+            },
+            {
+                "query_type": [
+                    "A",
+                    "AAAA"
+                ],
+                "server": "dns-fake"
+            },
+            {
+                "action": "route",
+                "domain": [
+                    "engage.cloudflareclient.com",
+                    "gjalnhgyhahe.yangliq.com"
+                ],
+                "domain_keyword": [],
+                "domain_regex": [],
+                "domain_suffix": [],
+                "rule_set": [],
+                "server": "dns-direct"
+            }
+        ],
+        "servers": [
+            {
+                "address": "tls://8.8.8.8",
+                "address_resolver": "dns-local",
+                "detour": "proxy",
+                "strategy": "",
+                "tag": "dns-remote"
+            },
+            {
+                "address": "underlying://0.0.0.0",
+                "address_resolver": "dns-local",
+                "detour": "direct",
+                "strategy": "",
+                "tag": "dns-direct"
+            },
+            {
+                "address": "rcode://success",
+                "tag": "dns-block"
+            },
+            {
+                "address": "fakeip",
+                "tag": "dns-fake"
+            },
+            {
+                "address": "underlying://0.0.0.0",
+                "detour": "direct",
+                "tag": "dns-local"
+            }
+        ]
+    },
+    "endpoints": [
+        {
+            "address": [
+                "172.16.0.2/32","2606:4700:110:84c1:fc16:265c:de8e:2687/128"
+            ],
+            "detour": "c-0-3-1",
+            "domain_strategy": "",
+            "mtu": 1280,
+            "name": "nekoray-wg",
+            "peers": [
+                {
+                    "address": "engage.cloudflareclient.com",
+                    "allowed_ips": [
+                        "0.0.0.0/0",
+                        "::/0"
+                    ],
+                    "persistent_keepalive_interval": 0,
+                    "port": 2408,
+                    "pre_shared_key": "",
+                    "public_key": "bmXOC+F1FxEMF9dyiK2H5/1SUtzH0JuVo51h2wPfgyo=",
+                    "reserved": [
+                        0
+                    ]
+                }
+            ],
+            "private_key": "gH562vkmoAv4UIcrECMYcvzP7TdVlVQtfb3b81W0fW8=",
+            "system": false,
+            "tag": "proxy",
+            "type": "wireguard",
+            "workers": 0
+        }
+    ],
+    "experimental": {
+        "clash_api": {
+            "default_mode": ""
+        }
+    },
+    "inbounds": [
+        {
+            "domain_strategy": "",
+            "listen": "127.0.0.1",
+            "listen_port": 2080,
+            "tag": "mixed-in",
+            "type": "mixed"
+        }
+    ],
+    "log": {
+        "level": "info"
+    },
+    "outbounds": [
+        {
+            "domain_strategy": "",
+            "method": "aes-128-gcm",
+            "password": "227f22dd-a9cf-4743-8aa6-72782256333c",
+            "server": "gjalnhgyhahe.yangliq.com",
+            "server_port": 31001,
+            "tag": "c-0-3-1",
+            "type": "shadowsocks",
+            "udp_over_tcp": false
+        },
+        {
+            "tag": "direct",
+            "type": "direct"
+        }
+    ],
+    "route": {
+        "final": "proxy",
+        "find_process": true,
+        "rule_set": [],
+        "rules": [
+            {
+                "action": "sniff",
+                "inbound": [
+                    "mixed-in",
+                    "tun-in"
+                ]
+            },
+            {
+                "action": "hijack-dns",
+                "protocol": "dns"
+            }
+        ]
+    }
+}
